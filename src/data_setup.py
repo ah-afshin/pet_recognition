@@ -49,6 +49,19 @@ class CustomPetDataset(Dataset):
         return image, label
 
 
+class TransformedDataset(Dataset):
+    def __init__(self, subset, transform):
+        self.subset = subset
+        self.transform = transform
+
+    def __getitem__(self, index):
+        x, y = self.subset[index]
+        return self.transform(x), y
+
+    def __len__(self):
+        return len(self.subset)
+
+
 def get_breeds_dataloader() -> tuple[DataLoader, DataLoader]:
     """Download, split and load dataset.
 
@@ -61,23 +74,43 @@ def get_breeds_dataloader() -> tuple[DataLoader, DataLoader]:
     Returns:
         tuple[DataLoader, DataLoader]: Train and test DataLoaders.
     """
-    transform = transforms.Compose([
-        transforms.Resize(size=IMAGE_SIZE),
-        transforms.RandomHorizontalFlip(p=0.5),
-        transforms.ToTensor()
+    train_transform = transforms.Compose([
+        transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),
+        transforms.RandomHorizontalFlip(),
+        transforms.RandomRotation(15),
+        transforms.ColorJitter(
+            brightness=0.2,
+            contrast=0.2,
+            saturation=0.2
+        ),
+        transforms.ToTensor(),
+        transforms.Normalize(
+            mean=[0.5, 0.5, 0.5],
+            std=[0.5, 0.5, 0.5]
+        ) # mean and standard deviation for each color channel
+    ])
+
+    test_transform = transforms.Compose([
+        transforms.Resize(256),
+        transforms.CenterCrop(224),
+        transforms.ToTensor(),
+        transforms.Normalize(
+            mean=[0.5, 0.5, 0.5],
+            std=[0.5, 0.5, 0.5]
+        ) # mean and standard deviation for each color channel
     ])
 
     ssl._create_default_https_context = ssl._create_unverified_context
     dataset = OxfordIIITPet(
         root="data/",
         download=True,
-        target_types="category",
-        transform=transform
+        target_types="category"
     )
 
     train_size = int(TRAIN_RATIO * len(dataset))
     test_size = len(dataset) - train_size
     train_dataset, test_dataset = random_split(dataset, [train_size, test_size])
+    train_dataset, test_dataset = TransformedDataset(train_dataset, train_transform), TransformedDataset(test_dataset, test_transform)
 
     train_dl = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
     test_dl = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False)

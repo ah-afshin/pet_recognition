@@ -59,7 +59,10 @@ def train_breeds_recog_model(
         train_dl: DataLoader,
         device: str,
         epochs: int,
-        learning_rate: float
+        learning_rate: float,
+        weight_decay: float = 0, # L2 regularization factor
+        schedule_lr_step: int = None,
+        schedule_lr_gamma: float = None
     ) -> None:
     """
     Train the given multiclass classification model using CrossEntropyLoss
@@ -76,7 +79,10 @@ def train_breeds_recog_model(
         None
     """
     loss_func = nn.CrossEntropyLoss()
-    optim = t.optim.Adam(model.parameters(), lr=learning_rate)
+    optim = t.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
+
+    if schedule_lr_step is not None and schedule_lr_gamma is not None:
+        t.optim.lr_scheduler.StepLR(optim, schedule_lr_step, schedule_lr_gamma)
 
     # debug
     # a = True
