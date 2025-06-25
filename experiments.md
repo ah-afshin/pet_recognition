@@ -634,3 +634,331 @@ accuracy on traindata:
 overfitted.
 
 ---
+
+## Experiment 13: Pre-Trained MobileNet V2 (feature extraction)
+### Details
+- blocks and network were freezed. the model was previously trained on ImageNet data set
+- classification layer was replaced with a linear layer (with Dropout).
+- the classification layer (block) was trained for 20 epochs (B: 8, lr: 1e-3)
+
+### Results
+```
+using device: cuda
+F:\code\pet_recognition\venv\lib\site-packages\torchvision\models\_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+F:\code\pet_recognition\venv\lib\site-packages\torchvision\models\_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=MobileNet_V2_Weights.IMAGENET1K_V1`. You can also use `weights=MobileNet_V2_Weights.DEFAULT` to get the most up-to-date weights.      
+  warnings.warn(msg)
+Epoch 1 | loss: 627.193497210741
+Epoch 2 | loss: 296.44069066643715
+Epoch 3 | loss: 250.1282778531313
+Epoch 4 | loss: 219.66876972466707
+Epoch 5 | loss: 208.78418096527457
+Epoch 6 | loss: 195.3811812484637
+Epoch 7 | loss: 183.3437040783465
+Epoch 8 | loss: 169.62748143076897
+Epoch 9 | loss: 175.88262029364705
+Epoch 10 | loss: 185.72357198176906
+Epoch 11 | loss: 175.8746707260143
+Epoch 12 | loss: 157.851230006665
+Epoch 13 | loss: 158.62252208963037
+Epoch 14 | loss: 168.83395702997223
+Epoch 15 | loss: 154.1298102173023
+Epoch 16 | loss: 158.85925243142992
+Epoch 17 | loss: 145.53149625076912
+Epoch 18 | loss: 162.39680461841635
+Epoch 19 | loss: 158.24795548710972
+Epoch 20 | loss: 152.62473891256377
+
+        loss:  0.4515860762204165
+        accuracy:  0.8532608695652174
+accuracy on traindata:
+
+        loss:  0.11823268756230075
+        accuracy:  0.9599184782608695
+
+        execution time: 2025.8601686954498s
+```
+
+### Note
+I got a warning because I loaded the pre-trained model the old-fashioned way 
+which it appeared not to be very standard. well, this experiment is actually
+really **successful**. accuracy over 85% on test data is good and acceptable
+and even though it is 10% lower than the accuracy on the train data, this
+much overfitting isn't concerning.
+
+---
+
+## Experiment 14: Pre-Trained MobileNet V2 (fine tuned)
+### Details
+- blocks and network were freezed. the model was previously trained on ImageNet data set
+- classification layer was replaced with a linear layer (with Dropout).
+- the classification layer (block) was trained for 5 epochs (B: 8, lr: 1e-4)
+- then fine tuned all layers for 15 epochs (B: 8, lr: 1e-4)
+
+### Result
+```
+using device: cuda
+Epoch 1 | loss: 1144.4444634914398
+Epoch 2 | loss: 832.1231826543808
+Epoch 3 | loss: 644.1364095211029
+Epoch 4 | loss: 526.922719180584
+Epoch 5 | loss: 458.66025799512863
+finetuning started
+Epoch 6 | loss: 404.52193224430084
+Epoch 7 | loss: 369.41794365644455
+Epoch 8 | loss: 334.28317525982857
+Epoch 9 | loss: 313.6946943998337
+Epoch 10 | loss: 297.7504475712776
+Epoch 11 | loss: 275.3107729703188
+Epoch 12 | loss: 268.87535017728806
+Epoch 13 | loss: 251.4853989034891
+Epoch 14 | loss: 240.90420266985893
+Epoch 16 | loss: 234.14072681963444
+Epoch 17 | loss: 224.76877158135176
+Epoch 18 | loss: 218.61519815027714
+Epoch 19 | loss: 211.10922230780125
+Epoch 20 | loss: 208.95960349962115
+
+        loss:  0.3827713985886911
+        accuracy:  0.8858695652173914
+accuracy on traindata:
+
+        loss:  0.30242004249062715
+        accuracy:  0.9296875
+
+        execution time: 2421.153921365738s
+```
+
+### Note
+well i accidentally fine-tuned all the layers due to a coding mistake.
+generally this isn't a good approach because it increases the risk of
+overfitting. however since accuracy and overfitting levels in this experiment
+were very good and acceptable, I decided not to change anything and not to
+repeat the experiment.
+
+---
+
+## Experiment 15: Pre-Trained ResNet18 (fine tuned)
+### Details
+- blocks and first two layers of network were freezed. the model was previously trained on ImageNet data set.
+- layer 3 and 4 were not freezed. they are fine tuned from the beggining of the train loop.
+- classification layer was replaced with a linear layer (with Dropout).
+- the classification layer (block) was trained for 20 epochs (B: 8, lr: 1e-3)
+
+### Results
+```
+using device: cuda
+Epoch 1 | loss: 898.4128633141518
+Epoch 2 | loss: 569.4255219399929
+Epoch 3 | loss: 475.93361650407314
+Epoch 4 | loss: 383.99166238307953
+Epoch 5 | loss: 339.4772923439741
+Epoch 6 | loss: 319.32122905924916
+Epoch 7 | loss: 255.49813161417842
+Epoch 8 | loss: 234.55711001344025
+Epoch 9 | loss: 224.54181181639433
+Epoch 10 | loss: 199.87826238945127
+Epoch 11 | loss: 182.32954698614776
+Epoch 12 | loss: 160.09410419873893
+Epoch 13 | loss: 155.05987930949777
+Epoch 14 | loss: 135.25611167866737
+Epoch 15 | loss: 132.1545193658676
+Epoch 16 | loss: 143.02430854877457
+Epoch 17 | loss: 111.55557688942645
+Epoch 18 | loss: 98.33810705982614
+Epoch 19 | loss: 114.80089500872418
+Epoch 20 | loss: 101.23259816970676
+
+        loss:  1.2180900018986152
+        accuracy:  0.7309782608695652
+accuracy on traindata:
+
+        loss:  0.15947526884679064
+        accuracy:  0.9548233695652174
+
+        execution time: 2260.1676919460297s
+```
+### Note
+this model, was agian a bit overfit, thats becaese we didn't train the head first, befor finetuning.
+any
+
+---
+
+## Experiment 16: Pre-Trained EfficientNet b0 (feature extraction)
+### Details
+- blocks and network were freezed. the model was previously trained on ImageNet data set
+- classification layer was replaced with a linear layer (with Dropout).
+- the classification layer (block) was trained for 20 epochs (B: 8, lr: 1e-4)
+
+### Results
+```
+using device: cuda
+Epoch 1 | loss: 1217.9891784191132
+Epoch 2 | loss: 1016.3267788887024
+Epoch 3 | loss: 862.9189001321793
+Epoch 4 | loss: 754.7283246517181
+Epoch 5 | loss: 662.4334119558334
+Epoch 6 | loss: 598.999404668808
+Epoch 7 | loss: 539.3183450698853
+Epoch 8 | loss: 502.4701461791992
+Epoch 9 | loss: 463.5139807462692
+Epoch 10 | loss: 440.66223526000977
+Epoch 11 | loss: 418.90176421403885
+Epoch 12 | loss: 393.08573311567307
+Epoch 13 | loss: 381.1789300441742
+Epoch 14 | loss: 365.3804070651531
+Epoch 15 | loss: 346.22139117121696
+Epoch 16 | loss: 340.44976300001144
+Epoch 17 | loss: 329.89475670456886
+Epoch 18 | loss: 318.23450353741646
+Epoch 19 | loss: 306.9516511261463
+Epoch 20 | loss: 294.85318760573864
+
+        loss:  0.6976782818851264
+        accuracy:  0.8641304347826086
+accuracy on traindata:
+
+        loss:  0.5370603730173215
+        accuracy:  0.9038722826086957
+
+        execution time: 2299.3265442848206s
+```
+
+---
+
+## Experiment 17: Pre-Trained EfficientNet b0 (fine tuned)
+### Details
+- blocks and network were freezed. the model was previously trained on ImageNet data set
+- classification layer was replaced with a linear layer (with Dropout).
+- the classification layer (block) was trained for 5 epochs (B: 8, lr: 1e-4)
+- then fine tuned last 4 layers for 15 epochs (B: 8, lr: 1e-4)
+
+### Result
+```
+using device: cuda
+Epoch 1 | loss: 1217.6927936077118
+Epoch 2 | loss: 1017.619083404541
+Epoch 3 | loss: 872.7235282659531
+Epoch 4 | loss: 759.6861160993576
+Epoch 5 | loss: 665.8681279420853
+finetuning started
+Epoch 6 | loss: 603.1910520792007
+Epoch 7 | loss: 547.2118337154388
+Epoch 8 | loss: 507.7261085510254
+Epoch 9 | loss: 472.21606266498566
+Epoch 10 | loss: 441.0216094851494
+Epoch 11 | loss: 421.02173775434494
+Epoch 12 | loss: 396.834845662117
+Epoch 13 | loss: 384.0993186533451
+Epoch 14 | loss: 363.9455943107605
+Epoch 15 | loss: 361.5533020198345
+Epoch 16 | loss: 339.20350420475006
+Epoch 17 | loss: 331.6569611430168
+Epoch 18 | loss: 322.7000236660242
+Epoch 19 | loss: 312.9666806459427
+Epoch 20 | loss: 300.1557802259922
+
+        loss:  0.6990421586062597
+        accuracy:  0.8478260869565217
+accuracy on traindata:
+
+        loss:  0.5409904095222768
+        accuracy:  0.8967391304347826
+
+        execution time: 2301.211370229721s
+```
+
+---
+
+## Experiment 18: Pre-Trained MobileNet V3 (feature extraction)
+### Details
+- blocks and network were freezed. the model was previously trained on ImageNet data set
+- a part of classification layer was replaced with a linear layer (with Dropout).
+- the classification layer (block) was trained for 20 epochs (B: 8, lr: 1e-3)
+
+### Results
+```
+using device: cuda
+Epoch 1 | loss: 762.7038839459419
+Epoch 2 | loss: 468.2414007782936
+Epoch 3 | loss: 410.9876525104046
+Epoch 4 | loss: 378.65804712474346
+Epoch 5 | loss: 348.9567364901304
+Epoch 6 | loss: 318.3062634244561
+Epoch 7 | loss: 314.7135491222143
+Epoch 8 | loss: 284.2169351875782
+Epoch 9 | loss: 302.6304429359734
+Epoch 10 | loss: 269.08853963017464
+Epoch 11 | loss: 270.6913813762367
+Epoch 12 | loss: 252.78386134421453
+Epoch 13 | loss: 231.07376971282065
+Epoch 14 | loss: 248.00546533986926
+Epoch 15 | loss: 244.8760861447081
+Epoch 16 | loss: 233.08903627842665
+Epoch 17 | loss: 221.77493639010936
+Epoch 18 | loss: 219.9726563822478
+Epoch 19 | loss: 203.83261383045465
+Epoch 20 | loss: 215.2058601519093
+
+        loss:  0.811797779387511
+        accuracy:  0.7866847826086957
+accuracy on traindata:
+
+        loss:  0.1307956205979755
+        accuracy:  0.9588994565217391
+
+        execution time: 1697.6255328655243s
+```
+
+### Note
+more complex models are more likely to overfit. as you can see mobile net v3
+is more overfitted than mobile net v2.
+
+---
+
+## Experiment 19: Pre-Trained MobileNet V3 (fine tuned)
+### Details
+- blocks and network were freezed. the model was previously trained on ImageNet data set
+- classification layer was replaced with a linear layer (with Dropout).
+- a part of the classification layer (block) was trained for 5 epochs (B: 8, lr: 1e-4)
+- then fine tuned last 4 layers for 15 epochs (B: 8, lr: 1e-4)
+
+### Result
+```
+using device: cuda
+Epoch 1 | loss: 1161.5775635242462
+Epoch 2 | loss: 790.3239207267761
+Epoch 3 | loss: 591.6434963941574
+Epoch 4 | loss: 494.7524176090956
+Epoch 5 | loss: 445.9883885383606
+finetuning started
+Epoch 6 | loss: 416.11276364326477
+Epoch 7 | loss: 396.15985372662544
+Epoch 8 | loss: 370.09851460158825
+Epoch 9 | loss: 366.626371845603
+Epoch 10 | loss: 339.1929488927126
+Epoch 11 | loss: 338.61429522931576
+Epoch 12 | loss: 323.1123569533229
+Epoch 13 | loss: 316.5488931685686
+Epoch 14 | loss: 301.2735814861953
+Epoch 15 | loss: 300.08365738391876
+Epoch 16 | loss: 286.67273046821356
+Epoch 17 | loss: 282.997614108026
+Epoch 18 | loss: 277.2514775916934
+Epoch 19 | loss: 271.1470742672682
+Epoch 20 | loss: 267.7297163680196
+
+        loss:  0.48165148919772194
+        accuracy:  0.8396739130434783
+accuracy on traindata:
+
+        loss:  0.3395599427825326
+        accuracy:  0.9110054347826086
+
+        execution time: 1901.2987399101257s
+```
+
+### Note
+learned more this time.
+
+---

@@ -85,9 +85,10 @@ def get_breeds_dataloader() -> tuple[DataLoader, DataLoader]:
         ),
         transforms.ToTensor(),
         transforms.Normalize(
-            mean=[0.5, 0.5, 0.5],
-            std=[0.5, 0.5, 0.5]
+            mean=[0.485, 0.456, 0.406],
+            std=[0.229, 0.224, 0.225]
         ) # mean and standard deviation for each color channel
+        #  these are numbers used in training model one ImageNet problem
     ])
 
     test_transform = transforms.Compose([
@@ -95,9 +96,10 @@ def get_breeds_dataloader() -> tuple[DataLoader, DataLoader]:
         transforms.CenterCrop(224),
         transforms.ToTensor(),
         transforms.Normalize(
-            mean=[0.5, 0.5, 0.5],
-            std=[0.5, 0.5, 0.5]
+            mean=[0.485, 0.456, 0.406],
+            std=[0.229, 0.224, 0.225]
         ) # mean and standard deviation for each color channel
+        #  these are numbers used in training model one ImageNet problem
     ])
 
     ssl._create_default_https_context = ssl._create_unverified_context

@@ -75,6 +75,9 @@ def train_breeds_recog_model(
         epochs (int): Number of epochs to train.
         learning_rate (float): Learning rate for the optimizer.
         
+        weight_decay (float) default= 0: L2 regularization factor         (Optional)
+        schedule_lr_step (int) default= None                              (Optional)
+        schedule_lr_gamma (float) default= None                           (Optional)
     Returns:
         None
     """
@@ -98,6 +101,106 @@ def train_breeds_recog_model(
             # debug
             # if a: print(y); a=False
             
+            y = y.long() # to be LongTensor with shape [B]
+            
+            y_pred_logit = model(x) # shape [B, 37]
+            loss = loss_func(y_pred_logit, y)
+            optim.zero_grad()
+            loss.backward()
+            optim.step()
+
+            total_loss_of_epoch += loss.item()
+        print(f"Epoch {epoch+1} | loss: {total_loss_of_epoch}")
+
+
+def train_features_extracted_breeds_recog_model(
+        model: nn.Module,
+        train_dl: DataLoader,
+        device: str,
+        epochs: int,
+        learning_rate: float
+    ) -> None:
+    """
+    Train the head of the given pre-trained model
+    using CrossEntropyLoss and provided training data.
+
+    Args:
+        model (nn.Module): The neural network model to train.
+        train_dl (DataLoader): PyTorch DataLoader containing training data.
+        device (str): Device to use for training ('cpu' or 'cuda').
+        epochs (int): Number of epochs to train.
+        learning_rate (float): Learning rate for the optimizer.
+        
+    Returns:
+        None
+    """
+    loss_func = nn.CrossEntropyLoss()
+    optim = t.optim.Adam(
+        filter(lambda p: p.requires_grad, model.parameters()), # only train params that require gradient
+        lr=learning_rate
+    )
+
+    model.train()
+    for epoch in range(epochs):
+        total_loss_of_epoch = 0
+
+        for batch in train_dl:
+            x, y = batch
+            x, y = x.to(device), y.to(device)
+                        
+            y = y.long() # to be LongTensor with shape [B]
+            
+            y_pred_logit = model(x) # shape [B, 37]
+            loss = loss_func(y_pred_logit, y)
+            optim.zero_grad()
+            loss.backward()
+            optim.step()
+            total_loss_of_epoch += loss.item()
+        print(f"Epoch {epoch+1} | loss: {total_loss_of_epoch}")
+
+
+def train_fine_tune_breeds_recog_model(
+        model: nn.Module,
+        train_dl: DataLoader,
+        device: str,
+        epochs: int,
+        learning_rate: float,
+        fine_tune_at_epoch: int = 5,
+        depth: int = 4
+    ) -> None:
+    """
+    Train the head of the given pre-trained model
+    using CrossEntropyLoss and provided training data.
+
+    Args:
+        model (nn.Module): The neural network model to train.
+        train_dl (DataLoader): PyTorch DataLoader containing training data.
+        device (str): Device to use for training ('cpu' or 'cuda').
+        epochs (int): Number of epochs to train.
+        learning_rate (float): Learning rate for the optimizer.
+        fine_tune_at_epoch (int): at which epoch does the fine tuning actually beggins.
+        depth (int): how many layers do we want to tune.
+        
+    Returns:
+        None
+    """
+    loss_func = nn.CrossEntropyLoss()
+    optim = t.optim.Adam(
+        filter(lambda p: p.requires_grad, model.parameters()), # only train params that require gradient
+        lr=learning_rate
+    )
+
+    model.train()
+    for epoch in range(epochs):
+        if epoch==fine_tune_at_epoch:
+            model.open_feature_extractor(depth)
+            print("finetuning started")
+
+        total_loss_of_epoch = 0
+        for batch in train_dl:
+            x, y = batch
+            x, y = x.to(device), y.to(device)
+                        
             y = y.long() # to be LongTensor with shape [B]
             
             y_pred_logit = model(x) # shape [B, 37]

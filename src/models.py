@@ -1,5 +1,6 @@
 import torch as t
 from torch import nn
+from torchvision import models
 
 
 
@@ -699,3 +700,94 @@ class PetBreedsRecognitionMobileNet_v2(nn.Module):
         x = self.blocks(x)
         x = self.head(x)
         return x
+
+
+
+class PetBreedsRecogPreTrainedMobileNetV2(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.model = models.mobilenet_v2(pretrained=True)
+        for param in self.model.features.parameters():
+            param.requires_grad = False
+        
+        self.model.classifier = nn.Sequential(
+            nn.Dropout(0.2),
+            nn.Linear(self.model.last_channel, 37) # 'cuz we have 37 classes
+        )
+
+    def open_feature_extractor(self, depth: int) -> None:
+        for name, child in list(self.model.features.named_children()): # this is a bug but I didn't change, look at experiment 14 markdown
+            for param in child.parameters():
+                param.requires_grad = True
+    
+    def forward(self, x: t.Tensor) -> t.Tensor:
+        return self.model(x)
+
+
+
+class PetBreedsRecogPreTrainedResNet18(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
+        for param in self.model.conv1.parameters():
+            param.requires_grad = False
+        for param in self.model.bn1.parameters():
+            param.requires_grad = False
+        for param in self.model.layer1.parameters():
+            param.requires_grad = False
+        for param in self.model.layer2.parameters():
+            param.requires_grad = False
+        # layer 3 and 4 were not freezed
+
+        self.model.fc = nn.Sequential(
+            nn.Dropout(0.2),
+            nn.Linear(self.model.fc.in_features, 37) # 'cuz we have 37 classes
+        )
+    
+    def forward(self, x: t.Tensor) -> t.Tensor:
+        return self.model(x)
+
+
+
+class PetBreedsRecogPreTrainedEfficientNetB0(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.model = models.efficientnet_b0(weights=models.EfficientNet_B0_Weights.DEFAULT)
+        for param in self.model.features.parameters():
+            param.requires_grad = False
+        
+        self.model.classifier = nn.Sequential(
+            nn.Dropout(0.2),
+            nn.Linear(self.model.classifier[1].in_features, 37) # 'cuz we have 37 classes
+        )
+    
+    def open_feature_extractor(self, depth: int) -> None:
+        for name, child in list(self.model.features.named_children())[-depth:]:
+            for param in child.parameters():
+                param.requires_grad = True
+    
+    def forward(self, x: t.Tensor) -> t.Tensor:
+        return self.model(x)
+
+
+
+class PetBreedsRecogPreTrainedMobileNetV3(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.model = models.mobilenet_v3_small(weights=models.MobileNet_V3_Small_Weights.DEFAULT)
+        for param in self.model.features.parameters():
+            param.requires_grad = False
+        
+        self.model.classifier[3] = nn.Sequential(
+            nn.Dropout(0.2),
+            # previous classifier had three layers in a sqeuential
+            nn.Linear(self.model.classifier[3].in_features, 37) # 'cuz we have 37 classes
+        )
+    
+    def open_feature_extractor(self, depth: int) -> None:
+        for name, child in list(self.model.features.named_children())[-depth:]:
+            for param in child.parameters():
+                param.requires_grad = True
+    
+    def forward(self, x: t.Tensor) -> t.Tensor:
+        return self.model(x)
