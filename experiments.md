@@ -780,7 +780,7 @@ accuracy on traindata:
 ```
 ### Note
 this model, was agian a bit overfit, thats becaese we didn't train the head first, befor finetuning.
-any
+anyway, it was worth a try.
 
 ---
 
@@ -823,6 +823,9 @@ accuracy on traindata:
 
         execution time: 2299.3265442848206s
 ```
+
+### Note
+very successful.
 
 ---
 
@@ -868,6 +871,9 @@ accuracy on traindata:
         execution time: 2301.211370229721s
 ```
 
+### Note
+successful.
+
 ---
 
 ## Experiment 18: Pre-Trained MobileNet V3 (feature extraction)
@@ -879,35 +885,35 @@ accuracy on traindata:
 ### Results
 ```
 using device: cuda
-Epoch 1 | loss: 762.7038839459419
-Epoch 2 | loss: 468.2414007782936
-Epoch 3 | loss: 410.9876525104046
-Epoch 4 | loss: 378.65804712474346
-Epoch 5 | loss: 348.9567364901304
-Epoch 6 | loss: 318.3062634244561
-Epoch 7 | loss: 314.7135491222143
-Epoch 8 | loss: 284.2169351875782
-Epoch 9 | loss: 302.6304429359734
-Epoch 10 | loss: 269.08853963017464
-Epoch 11 | loss: 270.6913813762367
-Epoch 12 | loss: 252.78386134421453
-Epoch 13 | loss: 231.07376971282065
-Epoch 14 | loss: 248.00546533986926
-Epoch 15 | loss: 244.8760861447081
-Epoch 16 | loss: 233.08903627842665
-Epoch 17 | loss: 221.77493639010936
-Epoch 18 | loss: 219.9726563822478
-Epoch 19 | loss: 203.83261383045465
-Epoch 20 | loss: 215.2058601519093
+Epoch 1 | loss: 750.0477274060249
+Epoch 2 | loss: 472.1994064003229
+Epoch 3 | loss: 415.4004752486944
+Epoch 4 | loss: 378.5403856188059
+Epoch 5 | loss: 340.4806291908026
+Epoch 6 | loss: 335.4834839850664
+Epoch 7 | loss: 315.61730998009443
+Epoch 8 | loss: 285.00090880692005
+Epoch 9 | loss: 285.2142367400229
+Epoch 10 | loss: 280.08437560498714
+Epoch 11 | loss: 264.8213483430445
+Epoch 12 | loss: 264.496435623616
+Epoch 13 | loss: 262.46735134813935
+Epoch 14 | loss: 244.01285494491458
+Epoch 15 | loss: 253.1249573091045
+Epoch 16 | loss: 237.69082155637443
+Epoch 17 | loss: 228.72976906690747
+Epoch 18 | loss: 223.46348185744137
+Epoch 19 | loss: 227.87884776387364
+Epoch 20 | loss: 213.15924902632833
 
-        loss:  0.811797779387511
-        accuracy:  0.7866847826086957
+        loss:  0.7490428084021677
+        accuracy:  0.7934782608695652
 accuracy on traindata:
 
-        loss:  0.1307956205979755
-        accuracy:  0.9588994565217391
+        loss:  0.13061818935373437
+        accuracy:  0.9561820652173914
 
-        execution time: 1697.6255328655243s
+        execution time: 2435.996080636978s
 ```
 
 ### Note
@@ -962,3 +968,9 @@ accuracy on traindata:
 learned more this time.
 
 ---
+
+# Conclusion
+pre-trained models preformed much better and became less overfit on training data.
+you can see a full analysis and conclusion in [analysis notebook](./notebooks/analysis.ipynb).
+
+I think model 16 (feature-extracted Efficient Net b0) is the best model I have trained.

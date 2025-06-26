@@ -35,7 +35,7 @@ def main() -> None:
     test_breeds_recog_model(model, test_dl, device=device)
     print("accuracy on traindata:"); test_breeds_recog_model(model, train_dl, device=device)
 
-    model_name = f"model_18__breedsrecog_pretrained_featureextract_mobilenet_v3"
+    model_name = f"model_19__breedsrecog_pretrained_featureextract_mobilenet_v3"
     t.save(model.state_dict(), "models/"+model_name+".pth")
 
 
